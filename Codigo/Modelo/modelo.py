@@ -1,29 +1,9 @@
-# modelos.py
+# Modelo/modelo.py
 from typing import Optional, List
-from sqlmodel import SQLModel, Field, Relationship, JSON, Column
+from sqlmodel import SQLModel, Field, Relationship
+import uuid
 
-# --- Modelos Anidados (JSON) ---
-class Direccion(SQLModel):
-    calle: str
-    ciudad_pais: str
-    codigo_postal: str
-
-class Editorial(SQLModel):
-    nombre: str
-    direccion: Direccion
-
-class Categoria(SQLModel):
-    genero_literario: str
-
-class PublicoObjetivo(SQLModel):
-    tipo: str  # +18, Publico en general, Dinámico
-
-class Serie(SQLModel):
-    nombre: str
-
-# --- MUEVE LA TABLA LINK AQUÍ ---
-# Tabla "link" (asociación) para la relación Muchos a Muchos
-# Debe definirse ANTES de Libro y Autor
+# --- Tablas Link (Many-to-Many) ---
 class LibroAutorLink(SQLModel, table=True):
     libro_id: Optional[int] = Field(
         default=None, foreign_key="libro.id", primary_key=True
@@ -32,22 +12,72 @@ class LibroAutorLink(SQLModel, table=True):
         default=None, foreign_key="autor.id", primary_key=True
     )
 
-# --- Modelos de Tabla (Tablas SQL) ---
+class LibroCategoriaLink(SQLModel, table=True):
+    libro_id: Optional[int] = Field(
+        default=None, foreign_key="libro.id", primary_key=True
+    )
+    categoria_id: Optional[int] = Field(
+        default=None, foreign_key="categoria.id", primary_key=True
+    )
 
-# Modelo para los Autores (Será una tabla)
+# --- Tablas de Entidad ---
+class Direccion(SQLModel, table=True):
+    id: Optional[int] = Field(default=None, primary_key=True)
+    calle: str
+    ciudad_pais: str
+    codigo_postal: str
+    
+    editorial: Optional["Editorial"] = Relationship(back_populates="direccion")
+
+class Editorial(SQLModel, table=True):
+    id: Optional[int] = Field(default=None, primary_key=True)
+    nombre: str
+    
+    direccion_id: int = Field(foreign_key="direccion.id")
+    direccion: Direccion = Relationship(back_populates="editorial")
+    
+    libros: List["Libro"] = Relationship(back_populates="editorial")
+
+class Categoria(SQLModel, table=True):
+    id: Optional[int] = Field(default=None, primary_key=True)
+    
+    # CAMBIO: Estandarizado a 'nombre' y añadido 'unique=True'
+    nombre: str = Field(index=True, unique=True)
+    descripcion: Optional[str] = None
+    
+    libros: List["Libro"] = Relationship(
+        back_populates="categorias", link_model=LibroCategoriaLink
+    )
+
+class PublicoObjetivo(SQLModel, table=True):
+    id: Optional[int] = Field(default=None, primary_key=True)
+    tipo: str = Field(index=True) # +18, Publico en general, Dinámico
+    
+    libros: List["Libro"] = Relationship(back_populates="publico_objetivo")
+
+class Serie(SQLModel, table=True):
+    id: Optional[int] = Field(default=None, primary_key=True)
+    nombre: str = Field(index=True)
+    
+    libros: List["Libro"] = Relationship(back_populates="serie")
+
 class Autor(SQLModel, table=True):
     id: Optional[int] = Field(default=None, primary_key=True)
     nombre: str = Field(index=True)
     
-    # La relación: "libros" es una lista de "Libro"
-    # Quita las comillas de link_model=
-    libros: List["Libro"] = Relationship(back_populates="autores", link_model=LibroAutorLink)
+    libros: List["Libro"] = Relationship(
+        back_populates="autores", link_model=LibroAutorLink
+    )
 
-# Modelo de Tabla para Libros
+# --- Tabla Principal: Libro ---
 class Libro(SQLModel, table=True):
     id: Optional[int] = Field(default=None, primary_key=True)
     
-    isbn: str = Field(unique=True, index=True)
+    isbn: str = Field(
+        default_factory=lambda: str(uuid.uuid4()), 
+        unique=True, 
+        index=True
+    )
     titulo: str
     edicion: Optional[str] = None
     ano_publicacion: Optional[int] = None
@@ -55,12 +85,20 @@ class Libro(SQLModel, table=True):
     precio: float
     formato: str # Físico o digital
 
-    # ... (Datos Anidados) ...
-    editorial: Editorial = Field(sa_column=Column(JSON))
-    categorias: List[Categoria] = Field(sa_column=Column(JSON))
-    publico_objetivo: PublicoObjetivo = Field(sa_column=Column(JSON))
-    serie: Optional[Serie] = Field(default=None, sa_column=Column(JSON))
+    # --- Relaciones (Foreign Keys) ---
+    editorial_id: Optional[int] = Field(default=None, foreign_key="editorial.id")
+    editorial: Optional[Editorial] = Relationship(back_populates="libros")
+    
+    publico_objetivo_id: Optional[int] = Field(default=None, foreign_key="publicoobjetivo.id")
+    publico_objetivo: Optional[PublicoObjetivo] = Relationship(back_populates="libros")
+    
+    serie_id: Optional[int] = Field(default=None, foreign_key="serie.id")
+    serie: Optional[Serie] = Relationship(back_populates="libros")
 
-    # --- Relaciones ---
-    # Quita las comillas de link_model=
-    autores: List[Autor] = Relationship(back_populates="libros", link_model=LibroAutorLink)
+    # --- Relaciones (Many-to-Many) ---
+    autores: List[Autor] = Relationship(
+        back_populates="libros", link_model=LibroAutorLink
+    )
+    categorias: List[Categoria] = Relationship(
+        back_populates="libros", link_model=LibroCategoriaLink
+    )

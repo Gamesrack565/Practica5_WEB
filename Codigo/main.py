@@ -1,7 +1,7 @@
 # main.py
 from fastapi import FastAPI
 from Servicios.database import create_db_and_tables
-from Rutas import rutas
+from Rutas import libros, autores, categorias, editoriales, publico_objetivo, series
 
 app = FastAPI(
     title="API de Catálogo de Librería",
@@ -15,8 +15,12 @@ def on_startup():
     create_db_and_tables()
 
 # Incluimos las rutas que definimos en rutas.py
-app.include_router(rutas.router)
-
+app.include_router(libros.router)
+app.include_router(autores.router)
+app.include_router(categorias.router)
+app.include_router(editoriales.router)       # <-- AÑADE ESTE
+app.include_router(publico_objetivo.router) # <-- AÑADE ESTE
+app.include_router(series.router)           # <-- AÑADE ESTE
 @app.get("/")
 def root():
     return {"mensaje": "Bienvenido a la API de la Librería"}
