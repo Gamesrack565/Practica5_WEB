@@ -70,34 +70,29 @@
 
 \section{Introducción}
 \subsection*{Planteamiento del problema}
-Se pretende crear una API centrada en la gestion del catalogo de una libreria, cuyo principal
-objetivo sera proporcionar un sistema que permita la administracion de informacion de los libros y sus autores,
-manejando las relaciones que hay entre ellos.
-Nuestro sistema debe ser capaz de lo siguiente:
+Se busca crear una API web cuyo propósito sea gestionar un inventario y optimizar envíos con ayuda del algoritmo genético simple.
+Para la gestión del inventario, se debe garantizar lo siguiente:
 \begin{itemize}
-    \item Permitir la creacion y consulta de autores en la base de datos.
-    \item Permitir la creacion de nuevos libros y poder asociarlos a uno o varios autores.
-    \item Implementar de forma acertada las relaciones muchos a mucho entre libros y autores.
-    \item Administrar de forma eficiente la propia informacion de un libro, como lo es su editorial, 
-          categorias, publico objetivo, etc.
-    \item Ofrecer endpoints para poder consultar libros basados en la filtracion de diferentes criterios.
+    \item Permitir crear, leer, actualizar y borrar items, categorías y envíos en una base de datos.
+\end{itemize}
+
+Para la optimización de envíos, se debe garantizar lo siguiente:
+\begin{itemize}
+    \item Ofrecer un endpoint que utilice el AGS para resolver el problema de la mochila. Que calcule la combinación de items que maximiza la ganancia total de un envío sin exceder una capacidad de peso determinada.
 \end{itemize}
 
 
 \subsection*{Propuesta de solución}
-La solución propuesta es el desarrollo de una API con el uso de FastAPI, la cual usara SQLModel para gestionar la persistencia de datos.
-Los componentes clave para lograr nuestra solucion son:
+La solución propuesta es el desarrollo de una API con FastAPI para la lógica de negocio y SQLModel para la gestión de la base de datos.
+Componentes clave de la solución:
 \begin{itemize}
-    \item \textbf{SQLModel:} Para definir los modelos de datos principales como lo son las tablas SQL, ademas de una tabla de enlaces que gestionara
-    la relacion muchos a muchos.
-    \item \textbf{FastAPI:} Para construir la API y definir los endpoints en el modulo rutas.py, ademas de manejar las solicitudes HTTP.
-    \item \textbf{Arquitectura modular:} Se refiere a la estructura que tendra la practica, dividiendola en los modulos: modelo.py, esquemas.py, servicios.py,
-                 rutas.py y database.py
+    \item \textbf{SQLModel:} Para definir la estructura de la base de datos estableciendo categoría, item y envío como entidades principales.
+    \item \textbf{endpoints (URLs):} Para crear, leer, actualizar y borrar items, categorías y envíos.
+    \item \textbf{Algoritmo Génetico:} Realizará el calculo. Simulando un proceso de evolución para encontrar la mejor combinación de items que da la mayor ganancia total sin superar la capacidad.
 \end{itemize}
 
 \section{Fundamentos Teóricos}
-
-Para la correcta creacion de nuestra práctica, es importante que entendamos las relaciones entre las tecnologías y los conceptos que ya revisados para la creación de una API, esta vez implementando persistencia de datos.
+En el desarrollo de esta práctica, se pondrán en uso conceptos y teconologías ya vistas; refinandolos de manera que sea entendible para el cliente, esto en forma de un inventario de biblioteca.
 
 
 \subsection*{Entorno de Trabajo y Herramientas Principales}
@@ -128,27 +123,31 @@ La persistencia de datos es la capacidad de un sistema para poder conservar la i
 \subsection*{API CRUD}
 Una API CRUD es una interfaz de programación que permite Crear, Leer, Actualizar y Borrar datos. \cite{ref6}
 
-\subsubsection*{Algoritmo Genético Simple (AGS)}
-Está basado en el proceso genetico de los organismos vivos. 
-Los Algoritmos Geneticos usan una analogía directa con el comportamiento natural. 
+\subsection*{Búsqueda por parámetros.}
+La búsqueda por parámetros consiste en consultar datos específicos en la base de datos utilizando ciertos "filtros" o "criterios". En la API se implementará mediante los endpoints:
 \begin{itemize}
-    \item \textbf{Población:} Trabajan con una poblacion de individuos, cada uno de los cuales representa una solucion factible a un problema dado. A cada individuo se le asigna un valor
- o puntuacion, relacionado con la bondad de dicha solucion. 
-    \item \textbf{Fitness:} Cuanto mayor sea la adaptacion de un individuo al problema, mayor
- sera la probabilidad de que el mismo sea seleccionado.
-    \item \textbf{Cruzamiento:} Será seleccionado para reproducirse, cruzando su material genetico con otro individuo seleccionado de igual forma. Este cruce producira nuevos individuos descendientes de los anteriores los cuales comparten algunas de las caractersticas de sus padres. Cuanto menor sea la adaptacion de un
- individuo, menor sera la probabilidad de que dicho individuo sea seleccionado para
- la reproduccion, y por tanto de que su material genetico se propague en sucesivas
- generaciones.\cite{ref7}
+    \item \textbf{Libros del mismo autor.} Que permitirá obtener todos los libros escritos por un mismo autor.
+    \item \textbf{Libros por categoría.} Que nos permitirá obtener todos los libros que pertenecen a una categoría específica.
+    \item \textbf{Libros por serie.} Que nos permitirá obtener todos los libros pertenecientes a una serie.
+    \item \textbf{Libros por público objetivo.} Que nos permitirá obtener los libros según el público al que van dirigidos.
 \end{itemize}
- 
- De esta manera se produce una nueva poblacion de posibles soluciones, la cual reemplaza a la anterior y verifica  la interesante propiedad de que contiene una mayor
- proporcion de buenas caractersticas en comparacion con la poblacion anterior. Así a
- lo largo de las generaciones las buenas caractersticas se propagan a travees de la
- poblacion. Favoreciendo el cruce de los individuos mejor adaptados, van siendo explo
-radas las areas mas prometedoras del espacio de busqueda. Si el Algoritmo Genetico
- ha sido bien disenado, la poblacion convergera hacia una solucion optima del proble
-ma.
+
+\subsection*{Digitalización de un catálogo.}
+Se trata de un proceso para la conversión de un catálogo de libros físicos a una búsqueda por consultas en un formato digital. 
+Tomando en cuenta los siguientes aspectos de cada libro:
+\begin{itemize}
+   \item Titulo
+   \item ISBN
+   \item Autor(es)
+   \item Editorial
+   \item Año de publicación
+   \item Páginas
+   \item Categorías
+   \item Precio
+   \item Formato (físico o digital)
+   \item Público objetivo (Mayores de edad o menores de edad)
+   \item Serie (si pertenece a una serie de libros)
+\end{itemize}
 \section{Diagrama UML}
 \begin{figure}[H]
     \centering
