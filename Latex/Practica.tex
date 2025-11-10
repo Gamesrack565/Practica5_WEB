@@ -29,10 +29,10 @@
     \end{tikzpicture}
     
     \begin{spacing}{1.5}
-        {\Huge \bfseries \noindent PRÁCTICA 4}
+        {\Huge \bfseries \noindent PRÁCTICA 5}
         \vspace{10pt}
 
-        {\LARGE RELACIONES CON UNA BASE DE DATOS}
+        {\LARGE APLICACIÓN PARA GESTIÓN DE UNA LIBRERÍA}
         
         \vspace{1cm}
         
@@ -70,25 +70,29 @@
 
 \section{Introducción}
 \subsection*{Planteamiento del problema}
-Se busca crear una API web cuyo propósito sea gestionar un inventario y optimizar envíos con ayuda del algoritmo genético simple.
-Para la gestión del inventario, se debe garantizar lo siguiente:
+Se pretende crear una API centrada en la gestion del catalogo de una libreria, cuyo principal
+objetivo sera proporcionar un sistema que permita la administracion de informacion de los libros y sus autores,
+manejando las relaciones que hay entre ellos.
+Nuestro sistema debe ser capaz de lo siguiente:
 \begin{itemize}
-    \item Permitir crear, leer, actualizar y borrar items, categorías y envíos en una base de datos.
-\end{itemize}
-
-Para la optimización de envíos, se debe garantizar lo siguiente:
-\begin{itemize}
-    \item Ofrecer un endpoint que utilice el AGS para resolver el problema de la mochila. Que calcule la combinación de items que maximiza la ganancia total de un envío sin exceder una capacidad de peso determinada.
+    \item Permitir la creacion y consulta de autores en la base de datos.
+    \item Permitir la creacion de nuevos libros y poder asociarlos a uno o varios autores.
+    \item Implementar de forma acertada las relaciones muchos a mucho entre libros y autores.
+    \item Administrar de forma eficiente la propia informacion de un libro, como lo es su editorial, 
+          categorias, publico objetivo, etc.
+    \item Ofrecer endpoints para poder consultar libros basados en la filtracion de diferentes criterios.
 \end{itemize}
 
 
 \subsection*{Propuesta de solución}
-La solución propuesta es el desarrollo de una API con FastAPI para la lógica de negocio y SQLModel para la gestión de la base de datos.
-Componentes clave de la solución:
+La solución propuesta es el desarrollo de una API con el uso de FastAPI, la cual usara SQLModel para gestionar la persistencia de datos.
+Los componentes clave para lograr nuestra solucion son:
 \begin{itemize}
-    \item \textbf{SQLModel:} Para definir la estructura de la base de datos estableciendo categoría, item y envío como entidades principales.
-    \item \textbf{endpoints (URLs):} Para crear, leer, actualizar y borrar items, categorías y envíos.
-    \item \textbf{Algoritmo Génetico:} Realizará el calculo. Simulando un proceso de evolución para encontrar la mejor combinación de items que da la mayor ganancia total sin superar la capacidad.
+    \item \textbf{SQLModel:} Para definir los modelos de datos principales como lo son las tablas SQL, ademas de una tabla de enlaces que gestionara
+    la relacion muchos a muchos.
+    \item \textbf{FastAPI:} Para construir la API y definir los endpoints en el modulo rutas.py, ademas de manejar las solicitudes HTTP.
+    \item \textbf{Arquitectura modular:} Se refiere a la estructura que tendra la practica, dividiendola en los modulos: modelo.py, esquemas.py, servicios.py,
+                 rutas.py y database.py
 \end{itemize}
 
 \section{Fundamentos Teóricos}
