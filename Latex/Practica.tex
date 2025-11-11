@@ -151,98 +151,18 @@ Tomando en cuenta los siguientes aspectos de cada libro:
 \section{Diagrama UML}
 \begin{figure}[H]
     \centering
-<<<<<<< HEAD
-    \includegraphics[width=1\textwidth]{Imagenes/diagramauml.jpeg}
-=======
-    
->>>>>>> 7d864be4b5a5b04fabcc156fd569caccca3a98e0
+    \includegraphics[width=1\textwidth]{Imagenes/uml1.png}
 \end{figure}
 
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=1\textwidth]{Imagenes/uml2.png}
+\end{figure}
 
 \section{Implementación}
 \subsection*{Código:}
 En esta sección, explicaremos las modificaciones y adiciones clave que transforman la API. El cambio fundamental es la introducción de \textbf{relaciones} en la base de datos, pasando de un solo modelo 'Item' a un sistema de tres modelos interconectados: Item, Categoria, y Envio.
 
-<<<<<<< HEAD
-\begin{figure}[H]
-    \centering
-    \includegraphics[width=1\textwidth]{Imagenes/Prac4_1.1.png}
-    \includegraphics[width=1\textwidth]{Imagenes/Prac4_1.2.png}
-    \caption{Definición de las tablas de enlace 'ItemCategoria' y 'ItemEnvio'.}
-\end{figure}
-
-La Práctica 4 introduce relaciones de \textbf{muchos a muchos}. Un ítem puede pertenecer a múltiples categorías, y un ítem puede estar en múltiples envíos. Para lograr esto en una base de datos, se requieren "tablas de enlace".
-\begin{itemize}
-    \item \texttt{ItemCategoria}: Actúa como puente entre 'Item' y 'Categoria'. Contiene 'item\_id' y 'categoria\_id' como claves foráneas y juntas forman la clave primaria.
-    \item \texttt{ItemEnvio}: De forma similar, une 'Item' y 'Envio' usando 'item\_id' y 'envio\_id'.
-\end{itemize}
-
-\begin{figure}[H]
-    \centering
-    \includegraphics[width=1\textwidth]{Imagenes/Prac4_2.1.png}
-    \includegraphics[width=1\textwidth]{Imagenes/Prac4_2.2.png}
-    \includegraphics[width=1\textwidth]{Imagenes/Prac4_2.3.png}
-    \caption{Modelos de tabla \texttt{Categoria}, \texttt{Item} (modificado) y \texttt{Envio}.}
-\end{figure}
-
-Con las tablas de enlace definidas, los modelos principales ahora usan el campo 'Relationship' de SQLModel:
-\begin{itemize}
-    \item \texttt{Categoria}: Define 'items: List["Item"] = Relationship(...)'.
-    \item \texttt{Item}: Es el modelo central en donde se definen dos relaciones: 'categorias: List[Categoria]' y 'envios: List["Envio"]'.
-    \item \texttt{Envio}: Define 'items: List[Item] = Relationship(...)'.
-\end{itemize}
-El parámetro \texttt{link\_model} le dice a SQLModel qué tabla de enlace usar, y \texttt{back\_populates} conecta los dos lados de la relación.
-
-\begin{figure}[H]
-    \centering
-    \includegraphics[width=1\textwidth]{Imagenes/Prac4_3.1.png} 
-    \includegraphics[width=1\textwidth]{Imagenes/Prac4_3.2.png}
-    \caption{Modelos de Creación (Input) y Salida (Output).}
-\end{figure}
-
-Para manejar estas relaciones en la API, los modelos de "Creación" (Input) y "Salida" (Output) fueron modificados:
-\begin{itemize}
-    \item \texttt{ItemCreate}: En lugar de pedir un 'categoria\_id', que es lo que se haría en una relación uno-a-muchos, ahora solicita 'categoria\_nombres: List[str]'. Esto resulta mas comodo ya que no se necesitan saber los IDs.
-    \item \texttt{EnvioCreate}: Pide una lista de 'item\_ids: List[int]' para asociar items existentes al nuevo envío.
-    \item \texttt{ItemOut} y \texttt{EnvioOut}: Se actualizan para mostrar la lista completa de objetos relacionados, dando una respuesta más completa.
-\end{itemize}
-
-\begin{figure}[H]
-    \centering
-    \includegraphics[width=1\textwidth]{Imagenes/Prac4_4.1.png} 
-    \caption{Lógica modificada del endpoint POST /items/.}
-\end{figure}
-
-La lógica de los endpoints se vuelve un poco mas compleja cuando manejamos las relaciones. Al crear un ítem 'POST \texttt{/items/}', no solo insertamos un registro, sino que ahora debe:
-\begin{enumerate}
-    \item Recibir la lista de \textbf{nombres} de categorías 'categoria\_nombres'.
-    \item Buscar en la base de datos los \textbf{objetos} \texttt{Categoria} que coincidan con esos nombres.
-    \item Validar que todas las categorías solicitadas existan.
-    \item Crear el nuevo objeto 'Item'.
-    \item Asignar la lista de objetos 'Categoria' encontrados al campo 'new\_item.categorias'.
-    \item Al hacer 'db.commit()', SQLModel gestiona la tabla de enlace 'ItemCategoria'.
-\end{enumerate}
-Esta lógica es similar a la aplicada al crear 'Envios' y al actualizar (PATCH) los recursos, donde las listas de relaciones se reemplazan.
-
-\begin{figure}[H]
-    \centering
-    \includegraphics[width=1\textwidth]{Imagenes/Prac4_5.1.png}
-    \includegraphics[width=1\textwidth]{Imagenes/Prac4_5.2.png}
-    \caption{Nuevo endpoint POST para el Algoritmo Genético.}
-\end{figure}
-
-Aqui tenemos la adición más importante, que es el endpoint \texttt{/optimizar/\{envio\_id\}}. Este endpoint integra el algoritmo genético importado desde \texttt{Algoritmo\_genetico.py} con nuestra API de envíos:
-\begin{enumerate}
-    \item Recibe un 'envio\_id' y una capacidad de peso.
-    \item Obtiene el objeto 'Envio' de la base de datos.
-    \item Accede a todos los items asociados a ese envío simplemente usando la relación: envio.items.
-    \item Extrae los pesos y ganancias de esa lista de items.
-    \item Inicializa y ejecuta el 'AlgoritmoGenetico' con esos datos.
-    \item La solución se usa para filtrar la lista de items y devolver solo los seleccionados que maximizan la ganancia sin superar la capacidad.
-\end{enumerate}
-=======
-
->>>>>>> 7d864be4b5a5b04fabcc156fd569caccca3a98e0
 
 \newpage % Opcional, para que las referencias empiecen en una página nueva
 
