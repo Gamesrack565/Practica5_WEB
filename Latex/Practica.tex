@@ -164,6 +164,35 @@ Tomando en cuenta los siguientes aspectos de cada libro:
 En esta sección, explicaremos las modificaciones y adiciones clave que transforman la API. El cambio fundamental es la introducción de \textbf{relaciones} en la base de datos, pasando de un solo modelo 'Item' a un sistema de tres modelos interconectados: Item, Categoria, y Envio.
 
 
+\subsubsection*{\texttt{Servicios/database.py}: Gestión de la Base de Datos}
+
+Este módulo es fundamental para la persistencia de datos.
+\begin{itemize}
+    \item \textbf{Configuración}: Establece la conexión con la base de datos. Se define la \texttt{DATABASE\_URL} para utilizar un archivo local de \textbf{SQLite} (\texttt{libreria.db}).
+    \item \textbf{Motor (\texttt{engine})}: Se crea el \texttt{engine} (motor) de SQLModel, que sirve como el punto de acceso centralizado y el gestor de la comunicación entre la aplicación y la base de datos.
+    \item \textbf{Gestión de Sesiones (\texttt{get\_session})}: Expone la función \texttt{get\_session} como una \textbf{dependencia} de FastAPI. Su responsabilidad es "inyectar" una sesión de base de datos activa en cada \textit{endpoint} que la requiera.
+\end{itemize}
+
+\subsubsection*{\texttt{Esquemas/esquemas.py}: Definición de Modelos de Datos}
+
+Este archivo define la estructura y las reglas de validación para todos los datos que maneja la API, utilizando las clases de \texttt{SQLModel}.
+\begin{itemize}
+    \item \textbf{\texttt{...Base} (Ej. \texttt{CategoriaBase})}: Define los atributos comunes y los tipos de datos de una entidad.
+    \item \textbf{\texttt{...Crear} (Ej. \texttt{AutorCreacion})}: Esquemas utilizados para validar los datos JSON que \textbf{ingresan} a la API durante las operaciones de creación (\texttt{POST}).
+    \item \textbf{\texttt{...Leer} (Ej. \texttt{AutorLeer})}: Esquemas que definen el formato de los datos que la API \textbf{devuelve} como respuesta. Comúnmente añaden el \texttt{id} generado por la BD.
+    \item \textbf{\texttt{...Actualizar} (Ej. \texttt{EditorialActualizar})}: Esquemas específicos para operaciones \texttt{PATCH}, donde todos sus campos son \texttt{Optional} para permitir actualizaciones parciales.
+\end{itemize}
+
+\subsubsection*{\texttt{Rutas/*.py}: Controladores de Endpoints de la API}
+
+Estos archivos definen los \textit{endpoints} (URLs) públicos de la aplicación utilizando \texttt{APIRouter} de FastAPI para organizar las rutas de manera modular.
+\begin{itemize}
+    \item \textbf{\texttt{Rutas/autores.py}}: Establece el prefijo \texttt{/Autores} e implementa las operaciones \texttt{POST} (crear), \texttt{GET} (leer) y \texttt{DELETE} (eliminar) para los autores.
+    \item \textbf{\texttt{Rutas/editoriales.py}}: Gestiona el CRUD completo para \texttt{/Editoriales}, incluyendo la ruta \texttt{PATCH} para actualizaciones parciales y la lógica \texttt{DELETE} para borrar la editorial y su dirección.
+    \item \textbf{\texttt{Rutas/publico\_objetivo.py} y \texttt{Rutas/series.py}}: Exponen las rutas \texttt{POST} y \texttt{GET} para crear y leer, respectivamente, las entidades de público objetivo y series.
+\end{itemize}
+
+
 \newpage % Opcional, para que las referencias empiecen en una página nueva
 
 % Añade la línea "Referencias" al índice como si fuera una sección
