@@ -159,6 +159,7 @@ Tomando en cuenta los siguientes aspectos de cada libro:
     \includegraphics[width=1\textwidth]{Imagenes/uml2.png}
 \end{figure}
 
+\newpage
 \section{Implementación}
 \subsection*{Código:}
 Para esta practica se nos solicito realizar una aplicacion encargada de gestionar una libreria, para lo cual se organizo el programa en varias carpetas, siguiendo la estructura que se nos dio en clase y con un orden basado en la importancia de cada archivo
@@ -199,6 +200,7 @@ Dentro del archivo se encuentra la definicio de las tablas en modo de clases, do
     \begin{center}
         \includegraphics[width=0.9\textwidth]{Imagenes/modelo1-LibroCategoriaLink.png}
     \end{center}
+    \newpage
     \item \textbf{Categoria}: Tabla para almacenar las categorías de los libros.
     \begin{center}
         \includegraphics[width=0.9\textwidth]{Imagenes/modelo1-categoria.png}
@@ -207,6 +209,7 @@ Dentro del archivo se encuentra la definicio de las tablas en modo de clases, do
     \begin{center}
         \includegraphics[width=0.9\textwidth]{Imagenes/modelo1-direccion.png}
     \end{center}
+    \newpage
     \item \textbf{Editorial}: Tabla para almacenar las editoriales, con una relación uno a uno con \texttt{Direccion}.
     \begin{center}
         \includegraphics[width=0.9\textwidth]{Imagenes/modelo1-editorial.png}
@@ -219,6 +222,7 @@ Dentro del archivo se encuentra la definicio de las tablas en modo de clases, do
     \begin{center}
         \includegraphics[width=0.9\textwidth]{Imagenes/modelo1-serie.png}
     \end{center}
+    \newpage
     \item \textbf{Autor}: Tabla para almacenar los autores de los libros.
     \begin{center}
         \includegraphics[width=0.9\textwidth]{Imagenes/modelo1-autor.png}
@@ -273,21 +277,21 @@ Las funciones más importantes son las de la entidad libro, ya que es el apartad
 
 \begin{figure}[H]
     \centering
-    \includegraphics[width=0.7\textwidth]{Imagenes/servicios62.png}
+    \includegraphics[width=1\textwidth]{Imagenes/servicios62.png}
 \end{figure}
 \begin{figure}[H]
     \centering
-    \includegraphics[width=0.7\textwidth]{Imagenes/servicios63.png}
+    \includegraphics[width=1\textwidth]{Imagenes/servicios63.png}
 \end{figure}
-
+\newpage
 Como se menciono la entidad libro es la más importante, por lo cual solo se mostara la funcion de creacion de libro:
 \begin{figure}[H]
     \centering
-    \includegraphics[width=0.7\textwidth]{Imagenes/creacion_libro1.png}
+    \includegraphics[width=1\textwidth]{Imagenes/creacion_libro1.png}
 \end{figure}
 \begin{figure}[H]
     \centering
-    \includegraphics[width=0.7\textwidth]{Imagenes/creacion_libro2.png}
+    \includegraphics[width=1\textwidth]{Imagenes/creacion_libro2.png}
 \end{figure}
 
 
@@ -299,35 +303,39 @@ Estos archivos definen los \textit{endpoints} (URLs) públicos de la aplicación
 \begin{itemize}
     \item \textbf{\texttt{Rutas/autores.py}}: Establece el prefijo \texttt{/Autores} e implementa las operaciones \texttt{POST} (crear), \texttt{GET} (leer) y \texttt{DELETE} (eliminar) para los autores.
     \begin{center}
-        \includegraphics[width=0.7\textwidth]{Imagenes/rutas_autores.png}
+        \includegraphics[width=1\textwidth]{Imagenes/rutas_autores.png}
     \end{center}
+    \newpage
     \item \textbf{\texttt{Rutas/editoriales.py}}: Gestiona el CRUD completo para \texttt{/Editoriales}, incluyendo la ruta \texttt{PATCH} para actualizaciones parciales y la lógica \texttt{DELETE} para borrar la editorial y su dirección.
     \begin{center}
-        \includegraphics[width=0.7\textwidth]{Imagenes/rutas_Editora.png}
+        \includegraphics[width=0.8\textwidth]{Imagenes/rutas_Editora.png}
     \end{center}
+    \newpage
     \item \textbf{\texttt{Rutas/publico\_objetivo.py} y \texttt{Rutas/series.py}}: Exponen las rutas \texttt{POST} y \texttt{GET} para crear y leer, respectivamente, las entidades de público objetivo y series.
     \begin{center}
-        \includegraphics[width=0.7\textwidth]{Imagenes/rutas_publico.png}
+        \includegraphics[width=1\textwidth]{Imagenes/rutas_publico.png}
     \end{center}
     \begin{center}
-        \includegraphics[width=0.7\textwidth]{Imagenes/rutas_Series.png}
+        \includegraphics[width=1\textwidth]{Imagenes/rutas_Series.png}
     \end{center}
+    \newpage
     \item \textbf{\texttt{Rutas/categorias.py}}: Implementa el CRUD completo para \texttt{/Categorias}, similar a \texttt{editoriales.py}.
     \begin{center}
-        \includegraphics[width=0.7\textwidth]{Imagenes/rutas_categorias.png}
+        \includegraphics[width=0.8\textwidth]{Imagenes/rutas_categorias.png}
     \end{center}
-    \item \textbf{\texttt{Rutas/libros.py}}: El archivo más complejo y principal de todos, maneja el CRUD completo para \texttt{/Libros} y define múltiples rutas \texttt{GET} para búsquedas específicas (por autor, categoría, serie y público objetivo).
+    \newpage
+    \item \textbf{\texttt{Rutas/libros.py}}: El archivo más complejo y prisncipal de todos, maneja el CRUD completo para \texttt{/Libros} y define múltiples rutas \texttt{GET} para búsquedas específicas (por autor, categoría, serie y público objetivo).
     \begin{center}
-        \includegraphics[width=0.7\textwidth]{Imagenes/rutas_libros1.png}
-    \end{center}
-    \begin{center}
-        \includegraphics[width=0.7\textwidth]{Imagenes/rutas_libros2.png}
+        \includegraphics[width=1\textwidth]{Imagenes/rutas_libros1.png}
     \end{center}
     \begin{center}
-        \includegraphics[width=0.7\textwidth]{Imagenes/rutas_libros3.png}
+        \includegraphics[width=1\textwidth]{Imagenes/rutas_libros2.png}
     \end{center}
     \begin{center}
-        \includegraphics[width=0.7\textwidth]{Imagenes/rutas_libros4.png}
+        \includegraphics[width=1\textwidth]{Imagenes/rutas_libros3.png}
+    \end{center}
+    \begin{center}
+        \includegraphics[width=1\textwidth]{Imagenes/rutas_libros4.png}
     \end{center}
 \end{itemize}
 

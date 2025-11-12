@@ -103,7 +103,6 @@ def leer_libros_por_serie(
     #Devuelve la lista de libros filtrada.
     return libros
 
-# (Añade esto en Rutas/libros.py)
 
 #Define el endpoint GET para buscar un libro por su ISBN (parametro de ruta).
 @router.get("/isbn/{isbn}", response_model=esquemas.LibroLeerCompleto)
