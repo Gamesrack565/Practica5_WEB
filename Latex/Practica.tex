@@ -1,5 +1,5 @@
 \documentclass[12pt]{article}
-\usepackage{graphicx} % Required for inserting images
+\usepackage{graphicx} 
 \usepackage[spanish]{babel}
 \usepackage{lmodern}
 \renewcommand{\familydefault}{\sfdefault}
@@ -9,7 +9,7 @@
 \usepackage{xcolor}
 \usepackage{amsmath}
 \usepackage{tikz}
-% Solo una vez se carga hyperref, con tus opciones y el linkcolor
+
 \usepackage[colorlinks=true, urlcolor=blue, linkcolor=black]{hyperref}
 
 \begin{document}
@@ -161,11 +161,20 @@ Tomando en cuenta los siguientes aspectos de cada libro:
 
 \section{Implementación}
 \subsection*{Código:}
-En esta sección, explicaremos las modificaciones y adiciones clave que transforman la API. El cambio fundamental es la introducción de \textbf{relaciones} en la base de datos, pasando de un solo modelo 'Item' a un sistema de tres modelos interconectados: Item, Categoria, y Envio.
+Para esta practica se nos solicito realizar una aplicacion encargada de gestionar una libreria, para lo cual se organizo el programa en varias carpetas, siguiendo la estructura que se nos dio en clase y con un orden basado en la importancia de cada archivo
 
+\textbf{Arquitectura:}
+\begin{itemize}
+    \item \textbf{Modelos:} Define las tablas y relaciones en la base de datos utilizando SQLModel. 
+    \item \textbf{Esquemas:} Define los modelos de datos y las reglas de validación.
+    \item \textbf{Servicios:} Contiene la configuración y gestión de la base de datos.
+    \item \textbf{Rutas:} Define los endpoints públicos de la API.
+\end{itemize}
+Para iniciar con el desarrollo de la aplicación, se creó el archivo principal \texttt{main.py}, que configura la aplicación FastAPI y monta los routers de las diferentes entidades (autores, editoriales, público objetivo y series).
+
+Al tener el main para inicar con el programa, debemos continuar con la creacion de la base de datos que se encuentra en la carpeta \texttt{Servicios}, ya que sin esto no podriamos almacenar ningun dato.
 
 \subsubsection*{\texttt{Servicios/database.py}: Gestión de la Base de Datos}
-
 Este módulo es fundamental para la persistencia de datos.
 \begin{itemize}
     \item \textbf{Configuración}: Establece la conexión con la base de datos. Se define la \texttt{DATABASE\_URL} para utilizar un archivo local de \textbf{SQLite} (\texttt{libreria.db}).
@@ -173,6 +182,57 @@ Este módulo es fundamental para la persistencia de datos.
     \item \textbf{Gestión de Sesiones (\texttt{get\_session})}: Expone la función \texttt{get\_session} como una \textbf{dependencia} de FastAPI. Su responsabilidad es "inyectar" una sesión de base de datos activa en cada \textit{endpoint} que la requiera.
 \end{itemize}
 
+Al tener el "creador" de la base de datos, procedemos a definir la estructura de la misma, para lo cual se creo la carpeta \texttt{Modelos}.
+\subsubsection*{\texttt{Modelos/modelos.py}: Definición de Tablas y Relaciones}
+Este archivo es la dependenica cero del programa y la base de datos, es decir no podemos crear/escribir un servicio sin antes tener la estructura de la base de datos definida.
+
+Más que nada este archivo se encarga de pasar la explicacion que se haria en una base de datos de cada tabla y sus relaciones a codigo python, para lo cual se utilizan las clases de \texttt{SQLModel}.
+
+Dentro del archivo se encuentra la definicio de las tablas en modo de clases, donde cada clase representa una tabla en la base de datos y sus atributos representan las columnas de dicha tabla:
+\begin{itemize}
+    \item \textbf{LibroAutorLink}: Tabla de enlace para la relación muchos a muchos entre libros y autores.
+    \begin{center}
+        \includegraphics[width=0.9\textwidth]{Imagenes/modelo1-LibroAutorLink.png}
+    \end{center}
+
+    \item \textbf{LibroCategoriaLink}: Tabla de enlace para la relación muchos a muchos entre libros y categorías. 
+    \begin{center}
+        \includegraphics[width=0.9\textwidth]{Imagenes/modelo1-LibroCategoriaLink.png}
+    \end{center}
+    \item \textbf{Categoria}: Tabla para almacenar las categorías de los libros.
+    \begin{center}
+        \includegraphics[width=0.9\textwidth]{Imagenes/modelo1-categoria.png}
+    \end{center}
+    \item \textbf{Direccion}: Tabla para almacenar las direcciones de las editoriales.
+    \begin{center}
+        \includegraphics[width=0.9\textwidth]{Imagenes/modelo1-direccion.png}
+    \end{center}
+    \item \textbf{Editorial}: Tabla para almacenar las editoriales, con una relación uno a uno con \texttt{Direccion}.
+    \begin{center}
+        \includegraphics[width=0.9\textwidth]{Imagenes/modelo1-editorial.png}
+    \end{center}
+    \item \textbf{PublicoObjetivo}: Tabla para almacenar los públicos objetivo de los libros.
+    \begin{center}
+        \includegraphics[width=0.9\textwidth]{Imagenes/modelo1-publico.png}
+    \end{center}
+    \item \textbf{Serie}: Tabla para almacenar las series de libros.
+    \begin{center}
+        \includegraphics[width=0.9\textwidth]{Imagenes/modelo1-serie.png}
+    \end{center}
+    \item \textbf{Autor}: Tabla para almacenar los autores de los libros.
+    \begin{center}
+        \includegraphics[width=0.9\textwidth]{Imagenes/modelo1-autor.png}
+    \end{center}
+    \item \textbf{Libro}: Tabla principal para almacenar los libros, con relaciones muchos a muchos con \texttt{Autor} y \texttt{Categoria}, y relaciones uno a muchos con \texttt{Editorial}, \texttt{PublicoObjetivo} y \texttt{Serie}.
+    En este caso la tabla \texttt{Libro} contiene claves foráneas que referencian a las tablas relacionadas.
+    Además en el apartado de ISBN se especifica que es un campo único para evitar duplicados y se tiene una regla que permite crear de forma automática un ISBN si no se proporciona uno al crear un libro. Aunque esto no es una práctica común en el mundo real, se implementó como algo extra.
+    \begin{center} 
+        \includegraphics[width=0.9\textwidth]{Imagenes/modelo1-libro.png}
+    \end{center}
+\end{itemize}
+\newpage
+
+Una vez terminado el modelo de la base de datos, procedemos a definir los esquemas de datos que se utilizarán para validar las entradas y salidas de la API, para lo cual se creo la carpeta \texttt{Esquemas}.
 \subsubsection*{\texttt{Esquemas/esquemas.py}: Definición de Modelos de Datos}
 
 Este archivo define la estructura y las reglas de validación para todos los datos que maneja la API, utilizando las clases de \texttt{SQLModel}.
@@ -183,14 +243,95 @@ Este archivo define la estructura y las reglas de validación para todos los dat
     \item \textbf{\texttt{...Actualizar} (Ej. \texttt{EditorialActualizar})}: Esquemas específicos para operaciones \texttt{PATCH}, donde todos sus campos son \texttt{Optional} para permitir actualizaciones parciales.
 \end{itemize}
 
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=1\textwidth]{Imagenes/Esquemas 1.png}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=1\textwidth]{Imagenes/Esquemas 2.png}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=1\textwidth]{Imagenes/Esquemas 3.png}
+\end{figure}
+\newpage
+
+Para que el programa pueda interactuar con la base de datos, es necesario definir funciones que realicen las operaciones CRUD (Crear, Leer, Actualizar, Borrar) para cada entidad. Estas funciones se encuentran en la carpeta \texttt{Servicios}.
+
+Es el apartado más extenso, ya que cada entidad tiene sus propias funciones CRUD, además de funciones adicionales para búsquedas específicas en el caso de los libros.
+\subsubsection*{\texttt{Servicios/servicios,py}: Funciones CRUD}
+Cada entidad tiene una función de busqueda por nombre, ID o mostrar todos.
+El unico que llega a tener más funciones es el de libros, ya que tiene funciones para buscar por autor, categoria, serie, publico objetivo y todos los libros. \\
+Las funciones más importantes son las de la entidad libro, ya que es el apartado principal del programa.
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.8\textwidth]{Imagenes/servicios1.png}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.7\textwidth]{Imagenes/servicios62.png}
+\end{figure}
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.7\textwidth]{Imagenes/servicios63.png}
+\end{figure}
+
+Como se menciono la entidad libro es la más importante, por lo cual solo se mostara la funcion de creacion de libro:
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.7\textwidth]{Imagenes/creacion_libro1.png}
+\end{figure}
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.7\textwidth]{Imagenes/creacion_libro2.png}
+\end{figure}
+
+
+
+Al tener los esquemas de datos y sus funciones procedemos a definir los controladores de los endpoints de la API, para lo cual se creo la carpeta \texttt{Rutas}.
 \subsubsection*{\texttt{Rutas/*.py}: Controladores de Endpoints de la API}
 
 Estos archivos definen los \textit{endpoints} (URLs) públicos de la aplicación utilizando \texttt{APIRouter} de FastAPI para organizar las rutas de manera modular.
 \begin{itemize}
     \item \textbf{\texttt{Rutas/autores.py}}: Establece el prefijo \texttt{/Autores} e implementa las operaciones \texttt{POST} (crear), \texttt{GET} (leer) y \texttt{DELETE} (eliminar) para los autores.
+    \begin{center}
+        \includegraphics[width=0.7\textwidth]{Imagenes/rutas_autores.png}
+    \end{center}
     \item \textbf{\texttt{Rutas/editoriales.py}}: Gestiona el CRUD completo para \texttt{/Editoriales}, incluyendo la ruta \texttt{PATCH} para actualizaciones parciales y la lógica \texttt{DELETE} para borrar la editorial y su dirección.
+    \begin{center}
+        \includegraphics[width=0.7\textwidth]{Imagenes/rutas_Editora.png}
+    \end{center}
     \item \textbf{\texttt{Rutas/publico\_objetivo.py} y \texttt{Rutas/series.py}}: Exponen las rutas \texttt{POST} y \texttt{GET} para crear y leer, respectivamente, las entidades de público objetivo y series.
+    \begin{center}
+        \includegraphics[width=0.7\textwidth]{Imagenes/rutas_publico.png}
+    \end{center}
+    \begin{center}
+        \includegraphics[width=0.7\textwidth]{Imagenes/rutas_Series.png}
+    \end{center}
+    \item \textbf{\texttt{Rutas/categorias.py}}: Implementa el CRUD completo para \texttt{/Categorias}, similar a \texttt{editoriales.py}.
+    \begin{center}
+        \includegraphics[width=0.7\textwidth]{Imagenes/rutas_categorias.png}
+    \end{center}
+    \item \textbf{\texttt{Rutas/libros.py}}: El archivo más complejo y principal de todos, maneja el CRUD completo para \texttt{/Libros} y define múltiples rutas \texttt{GET} para búsquedas específicas (por autor, categoría, serie y público objetivo).
+    \begin{center}
+        \includegraphics[width=0.7\textwidth]{Imagenes/rutas_libros1.png}
+    \end{center}
+    \begin{center}
+        \includegraphics[width=0.7\textwidth]{Imagenes/rutas_libros2.png}
+    \end{center}
+    \begin{center}
+        \includegraphics[width=0.7\textwidth]{Imagenes/rutas_libros3.png}
+    \end{center}
+    \begin{center}
+        \includegraphics[width=0.7\textwidth]{Imagenes/rutas_libros4.png}
+    \end{center}
 \end{itemize}
+
+
 
 
 \newpage % Opcional, para que las referencias empiecen en una página nueva
