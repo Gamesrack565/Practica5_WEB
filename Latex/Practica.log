@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.25 (MiKTeX 24.1) (preloaded format=pdflatex 2025.9.21)  11 NOV 2025 20:23
+This is pdfTeX, Version 3.141592653-2.6-1.40.25 (MiKTeX 24.1) (preloaded format=pdflatex 2025.9.21)  11 NOV 2025 20:26
 entering extended mode
  restricted \write18 enabled.
  file:line:error style messages enabled.
@@ -665,7 +665,7 @@ LaTeX Font Info:    Trying to load font information for OT1+lmtt on input line 1
  (C:\Users\Games\AppData\Local\Programs\MiKTeX\tex/latex/lm\ot1lmtt.fd
 File: ot1lmtt.fd 2015/05/01 v1.6.1 Font defs for Latin Modern
 ) [3{C:/Users/Games/AppData/Local/Programs/MiKTeX/fonts/enc/dvips/lm/lm-rmtt.enc}] [4]
-<Imagenes/uml1.png, id=79, 807.61725pt x 532.99126pt>
+<Imagenes/uml1.png, id=78, 807.61725pt x 532.99126pt>
 File: Imagenes/uml1.png Graphic file (type png)
 <use Imagenes/uml1.png>
 Package pdftex.def Info: Imagenes/uml1.png  used on input line 154.
@@ -977,7 +977,7 @@ Here is how much of TeX's memory you used:
  1141 hyphenation exceptions out of 8191
  84i,7n,87p,622b,602s stack positions out of 10000i,1000n,20000p,200000b,200000s
 <C:/Users/Games/AppData/Local/Programs/MiKTeX/fonts/type1/public/lm/lmss12.pfb><C:/Users/Games/AppData/Local/Programs/MiKTeX/fonts/type1/public/lm/lmss17.pfb><C:/Users/Games/AppData/Local/Programs/MiKTeX/fonts/type1/public/lm/lmss8.pfb><C:/Users/Games/AppData/Local/Programs/MiKTeX/fonts/type1/public/lm/lmssbx10.pfb><C:/Users/Games/AppData/Local/Programs/MiKTeX/fonts/type1/public/lm/lmsso12.pfb><C:/Users/Games/AppData/Local/Programs/MiKTeX/fonts/type1/public/lm/lmtk10.pfb><C:/Users/Games/AppData/Local/Programs/MiKTeX/fonts/type1/public/lm/lmtt12.pfb>
-Output written on Practica.pdf (41 pages, 1904385 bytes).
+Output written on Practica.pdf (41 pages, 1904331 bytes).
 PDF statistics:
  389 PDF objects out of 1000 (max. 8388607)
  69 named destinations out of 1000 (max. 500000)
