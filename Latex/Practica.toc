@@ -3,4 +3,5 @@
 \contentsline {section}{\numberline {2}Fundamentos Teóricos}{2}{section.2}%
 \contentsline {section}{\numberline {3}Diagrama UML}{6}{section.3}%
 \contentsline {section}{\numberline {4}Implementación}{8}{section.4}%
-\contentsline {section}{Referencias}{32}{section*.15}%
+\contentsline {section}{\numberline {5}Resultados}{32}{section.5}%
+\contentsline {section}{Referencias}{40}{section.5}%

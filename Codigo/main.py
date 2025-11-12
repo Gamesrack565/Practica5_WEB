@@ -13,7 +13,8 @@ from Rutas import libros, autores, categorias, editoriales, publico_objetivo, se
 
 app = FastAPI(
     title="API de Catálogo de Librería",
-    description="Proyecto para gestionar los libros de una librería."
+    description="Practica 5: Catalógo de Librería",
+    version="1.0.0"
 )
 
 @app.on_event("startup")

@@ -249,17 +249,17 @@ Este archivo define la estructura y las reglas de validación para todos los dat
 
 \begin{figure}[H]
     \centering
-    \includegraphics[width=1\textwidth]{Imagenes/Esquemas 1.png}
+    \includegraphics[width=0.7\textwidth]{Imagenes/Esquemas 1.png}
 \end{figure}
 
 \begin{figure}[H]
     \centering
-    \includegraphics[width=1\textwidth]{Imagenes/Esquemas 2.png}
+    \includegraphics[width=0.83\textwidth]{Imagenes/Esquemas 2.png}
 \end{figure}
 
 \begin{figure}[H]
     \centering
-    \includegraphics[width=1\textwidth]{Imagenes/Esquemas 3.png}
+    \includegraphics[width=0.9\textwidth]{Imagenes/Esquemas 3.png}
 \end{figure}
 \newpage
 
@@ -297,7 +297,7 @@ Como se menciono la entidad libro es la más importante, por lo cual solo se mos
 
 
 Al tener los esquemas de datos y sus funciones procedemos a definir los controladores de los endpoints de la API, para lo cual se creo la carpeta \texttt{Rutas}.
-\subsubsection*{\texttt{Rutas/*.py}: Controladores de Endpoints de la API}
+\subsubsection*{\texttt{Rutas/}: Controladores de Endpoints de la API}
 
 Estos archivos definen los \textit{endpoints} (URLs) públicos de la aplicación utilizando \texttt{APIRouter} de FastAPI para organizar las rutas de manera modular.
 \begin{itemize}
@@ -339,9 +339,91 @@ Estos archivos definen los \textit{endpoints} (URLs) públicos de la aplicación
     \end{center}
 \end{itemize}
 
+\newpage
+\section{Resultados}
+La aplicacion nos permite crear libros siguiendo la estructura de la base de datos, algunas opciones pueden ser descartadas ya que no todas son obligatorias.
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=1\textwidth]{Imagenes/Resultados1.png}
+\end{figure}
+Obviamente no se debe poner los comentarios que estan en el cuadro de texto, ya que marcaria un error. Se debe poner de la siguiente manera:
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=1\textwidth]{Imagenes/Resultados5.png}
+\end{figure}
 
+\newpage
+Al ponerlo de manera correcta, nos imprimira un mensaje con los datos del libro creado.
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.5\textwidth]{Imagenes/Resultados2.png}
+\end{figure}
+Nos dara la informacion de la editorial, publico objetivo, serie, autores y categorias.
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.6\textwidth]{Imagenes/Resultados3.png}
+\end{figure}
+\newpage
+En caso de que pongamos un nombre mal en cualquier campo, nos marcara un error ya que no encontro dicho nombre.
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=1\textwidth]{Imagenes/Resultados4.png}
+\end{figure}
 
+Podemos ver todos los libros creados en la base de datos con el endpoint de "Obtener todos los libros".
+Y podemos limitar la cantidad de libros que queremos ver por medio de los Query Parameters "skip" y "limit".
 
+Los Query Parameters estan para todos los endpoints de obtener de todos las entidades.
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=1\textwidth]{Imagenes/Resultados6.png}
+\end{figure}
+
+\newpage
+En este caso selepcionamos ver solo 1 libro:
+
+Nos dara la misma informacion que imprime crear libro.
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.6\textwidth]{Imagenes/Resultados7.png}
+\end{figure}
+
+Es similar para los demás metodos get.
+
+Se tiene la obtencion de libros por autor:
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.88\textwidth]{Imagenes/Resultados8.png}
+\end{figure}
+
+Se tiene la obtencion de libros por categoria:
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=1\textwidth]{Imagenes/Resultados9.png}
+\end{figure}
+
+\newpage
+Se tiene la obtencion de libros por serie:
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=1\textwidth]{Imagenes/Resultados10.png}
+\end{figure}
+
+\newpage
+Se tiene la obtencion de libros por publico objetivo:
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=1\textwidth]{Imagenes/Resultados11.png}
+\end{figure}
+
+\newpage
+Para las demás entidades es similar y más sencillo, ya que solo tienen los endpoints basicos de crear, obtener por id, obtener todos, actualizar y eliminar.
+Algunas opciones no eran necesarias pero se implemenaron para tener un mejor manejo y control.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=1\textwidth]{Imagenes/Resultados12.png}
+\end{figure}
 \newpage % Opcional, para que las referencias empiecen en una página nueva
 
 % Añade la línea "Referencias" al índice como si fuera una sección
