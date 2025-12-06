@@ -15,7 +15,7 @@ router = APIRouter(prefix="/PublicoObjetivo", tags=["Publico Objetivo"])
 #Define la funcion para crear un tipo de publico objetivo.
 def crear_publico_objetivo(
     #Define que el cuerpo (body) de la peticion debe seguir el esquema 'PublicoObjetivoCrear'.
-    publico: esquemas.PublicoObjetivoCrear, 
+    publico: esquemas.PublicoObjetivoCrear,
     #Inyecta la dependencia de la sesion de la base de datos.
     session: Session = Depends(get_session)
 ):

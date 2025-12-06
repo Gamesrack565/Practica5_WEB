@@ -1,11 +1,12 @@
 #Libros
 
 #Modulos y librerias
+from Servicios import servicios
+from Esquemas import esquemas
+
 from fastapi import APIRouter, Depends, HTTPException, Query
 from sqlmodel import Session
 from typing import List
-from Servicios import servicios
-from Esquemas import esquemas
 from Servicios.database import get_session
 
 
@@ -40,6 +41,7 @@ def leer_libros_todos(
     libros = servicios.get_libros_todos(session, skip=skip, limit=limit)
     #Devuelve la lista de libros encontrada.
     return libros
+
 # 1. Consultar libros x autor
 #Define el endpoint GET en /por-autor, respondiendo con una lista de libros completos.
 @router.get("/por-autor", response_model=List[esquemas.LibroLeerCompleto]) # Cambiado
@@ -147,3 +149,36 @@ def leer_libros_por_publico(
     )
     #Devuelve la lista de libros filtrada.
     return libros
+
+
+@router.delete("/{libro_id}", status_code=204)
+def eliminar_libro(
+        libro_id: int,
+        session: Session = Depends(get_session)
+):
+    # Llamamos al servicio que acabamos de crear
+    exito = servicios.delete_libro(session, libro_id)
+
+    # Si el servicio nos dice False (no lo encontró), lanzamos error 404
+    if not exito:
+        raise HTTPException(status_code=404, detail="Libro no encontrado")
+
+    # Si todo salió bien, devolvemos 204 (Sin contenido, significa "Borrado OK")
+    return None
+
+
+# --- PEGAR ESTO AL FINAL DE routers/libros.py ---
+
+@router.patch("/{libro_id}", response_model=esquemas.LibroLeerCompleto)
+def actualizar_libro(
+        libro_id: int,
+        libro_update: esquemas.LibroActualizar,
+        session: Session = Depends(get_session)
+):
+    # Llamamos al servicio de actualización
+    libro_actualizado = servicios.update_libro(session, libro_id, libro_update)
+
+    if not libro_actualizado:
+        raise HTTPException(status_code=404, detail="Libro no encontrado")
+
+    return libro_actualizado

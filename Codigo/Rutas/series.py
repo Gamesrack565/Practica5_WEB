@@ -15,7 +15,7 @@ router = APIRouter(prefix="/Series", tags=["Series"])
 #Define la funcion para crear una serie.
 def crear_serie(
     #Define que el cuerpo (body) de la peticion debe seguir el esquema 'SerieCrear'.
-    serie: esquemas.SerieCrear, 
+    serie: esquemas.SerieCrear,
     #Inyecta la dependencia de la sesion de la base de datos.
     session: Session = Depends(get_session)
 ):

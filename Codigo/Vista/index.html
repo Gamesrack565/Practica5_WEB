@@ -1,0 +1,314 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gestión de Librería Pro</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
+    <style>
+        /* --- ESTILOS (Mismos de siempre) --- */
+        body { font-family: 'Inter', sans-serif; padding: 40px; background-color: #f0f2f5; color: #333; display: flex; gap: 40px; }
+        .col-izquierda { flex: 1; max-width: 400px; }
+        .col-derecha { flex: 2; position: relative; }
+        h1 { color: #1a202c; margin-bottom: 10px; }
+        h2 { font-size: 1.2em; color: #2d3748; margin-bottom: 15px; border-bottom: 2px solid #e2e8f0; padding-bottom: 10px; }
+
+        /* FORMULARIOS Y TARJETAS */
+        .card-form { background: white; padding: 25px; border-radius: 12px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); }
+        .form-group { margin-bottom: 15px; }
+        label { display: block; margin-bottom: 5px; font-weight: 600; font-size: 0.9em; color: #4a5568; }
+        input, select { width: 100%; padding: 10px; border: 1px solid #cbd5e0; border-radius: 6px; box-sizing: border-box; }
+        input:focus { outline: none; border-color: #3182ce; ring: 2px solid #bee3f8; }
+        .hint { font-size: 0.8em; color: #718096; margin-top: 4px; }
+
+        /* BOTONES */
+        button { padding: 10px 16px; border: none; border-radius: 6px; cursor: pointer; font-weight: 600; transition: all 0.2s; font-size: 0.9em; }
+        .btn-guardar { background-color: #3182ce; color: white; width: 100%; margin-top: 10px; padding: 12px; }
+        .btn-guardar:hover { background-color: #2c5282; }
+        .btn-eliminar { background-color: #feb2b2; color: #c53030; margin-left: 5px; }
+        .btn-editar { background-color: #bee3f8; color: #2b6cb0; }
+
+        /* TOOLBAR */
+        .toolbar { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; gap: 10px; }
+        .search-container { flex: 1; display: flex; gap: 0; box-shadow: 0 2px 4px rgba(0,0,0,0.05); border-radius: 8px; }
+        .search-type { width: 150px; border-top-right-radius: 0; border-bottom-right-radius: 0; background-color: #f7fafc; border-right: none; cursor: pointer; }
+        .search-input { border-top-left-radius: 0; border-bottom-left-radius: 0; flex: 1; }
+
+        /* TABLA */
+        .tabla-container { background: white; border-radius: 12px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); overflow: hidden; }
+        table { width: 100%; border-collapse: collapse; }
+        th { background-color: #edf2f7; color: #4a5568; padding: 16px; text-align: left; font-size: 0.85em; text-transform: uppercase; }
+        td { padding: 16px; border-bottom: 1px solid #e2e8f0; vertical-align: middle; }
+        .badge { background-color: #e2e8f0; padding: 4px 8px; border-radius: 99px; font-size: 0.75em; margin-right: 4px; display: inline-block; margin-top: 2px;}
+        .badge-publico { background-color: #c6f6d5; color: #22543d; border: 1px solid #9ae6b4; }
+        .precio { font-weight: bold; color: #2f855a; }
+
+        /* MODAL */
+        .modal-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 1000; justify-content: center; align-items: center; overflow-y: auto; }
+        .modal-content { background: white; padding: 30px; border-radius: 12px; width: 450px; box-shadow: 0 10px 25px rgba(0,0,0,0.2); position: relative; margin: 20px;}
+        .close-modal { position: absolute; top: 15px; right: 15px; cursor: pointer; font-size: 1.5em; color: #aaa; }
+    </style>
+</head>
+<body>
+
+    <div class="col-izquierda">
+        <div class="card-form">
+            <h2>➕ Nuevo Libro</h2>
+            <form id="formCrear" onsubmit="guardarLibro(event)">
+                <div class="form-group"><label>Título</label><input type="text" id="titulo" required></div>
+                <div class="form-group"><label>ISBN</label><input type="text" id="isbn"></div>
+                <div class="form-group"><label>Precio ($)</label><input type="number" id="precio" step="0.01" required></div>
+                <div class="form-group"><label>Autor(es)</label><input type="text" id="autores" placeholder="Separar por comas"></div>
+                <div class="form-group"><label>Público Objetivo</label><input type="text" id="publico" placeholder="Ej. General, +18"></div>
+                <div class="form-group"><label>Categoría(s)</label><input type="text" id="categorias" placeholder="Separar por comas"></div>
+                <div class="form-group"><label>Editorial</label><input type="text" id="editorial"></div>
+                <button type="submit" class="btn-guardar">Crear Libro</button>
+            </form>
+        </div>
+    </div>
+
+    <div class="col-derecha">
+        <div style="display:flex; justify-content:space-between; align-items:flex-end;">
+            <h1>Inventario</h1>
+            <span style="color:#718096; font-size:0.9em;">Total: <strong id="totalLibros">0</strong> libros</span>
+        </div>
+        <div class="toolbar">
+            <div class="search-container">
+                <select id="filtroTipo" class="search-type" onchange="actualizarPlaceholder()">
+                    <option value="titulo">Título</option>
+                    <option value="autor">Autor</option>
+                    <option value="categoria">Categoría</option>
+                    <option value="publico">Público</option>
+                    <option value="isbn">ISBN</option>
+                </select>
+                <input type="text" id="buscador" class="search-input" placeholder="Buscar..." onkeyup="buscarLibros()">
+            </div>
+            <button onclick="cargarLibros()" style="background:#edf2f7; color:#4a5568;">🔄 Todo</button>
+        </div>
+        <div class="tabla-container">
+            <table id="tablaLibros">
+                <thead>
+                    <tr>
+                        <th>Título / ISBN</th>
+                        <th>Autor(es)</th>
+                        <th>Info</th>
+                        <th>Precio</th>
+                        <th style="width: 140px;">Acciones</th>
+                    </tr>
+                </thead>
+                <tbody id="cuerpoTabla"></tbody>
+            </table>
+        </div>
+    </div>
+
+    <div class="modal-overlay" id="modalEditar">
+        <div class="modal-content">
+            <span class="close-modal" onclick="cerrarModal()">&times;</span>
+            <h2>Editar Libro</h2>
+            <form id="formEditar" onsubmit="enviarEdicion(event)">
+                <input type="hidden" id="edit_id">
+
+                <div class="form-group">
+                    <label>Título</label>
+                    <input type="text" id="edit_titulo" required>
+                </div>
+
+                <div class="form-group">
+                    <label>ISBN</label>
+                    <input type="text" id="edit_isbn">
+                </div>
+
+                <div class="form-group">
+                    <label>Precio</label>
+                    <input type="number" id="edit_precio" step="0.01" required>
+                </div>
+
+                <div class="form-group">
+                    <label>Autor(es)</label>
+                    <input type="text" id="edit_autores">
+                    <div class="hint">Separar por comas</div>
+                </div>
+
+                <div class="form-group">
+                    <label>Público Objetivo</label>
+                    <input type="text" id="edit_publico">
+                </div>
+
+                <div class="form-group">
+                    <label>Categoría(s)</label>
+                    <input type="text" id="edit_categorias">
+                    <div class="hint">Separar por comas</div>
+                </div>
+
+                <div class="form-group">
+                    <label>Editorial</label>
+                    <input type="text" id="edit_editorial">
+                </div>
+
+                <button type="submit" class="btn-guardar" style="background-color: #ed8936;">Guardar Cambios</button>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        const API_URL = 'http://127.0.0.1:8000/Libros';
+
+        // --- FUNCIONES DE INTERFAZ ---
+        function actualizarPlaceholder() {
+            const tipo = document.getElementById('filtroTipo').value;
+            const input = document.getElementById('buscador');
+            input.value = "";
+            const textos = { 'titulo': 'Ej. Harry...', 'autor': 'Ej. Cervantes...', 'categoria': 'Ej. Novela...', 'publico': 'Ej. +18...', 'isbn': 'Ej. 978...' };
+            input.placeholder = "🔍 " + (textos[tipo] || "Buscar...");
+            cargarLibros();
+        }
+
+        function abrirModal(libroString) {
+            const libro = JSON.parse(decodeURIComponent(libroString));
+
+            // Llenamos TODOS los campos
+            document.getElementById('edit_id').value = libro.id;
+            document.getElementById('edit_titulo').value = libro.titulo;
+            document.getElementById('edit_isbn').value = libro.isbn || '';
+            document.getElementById('edit_precio').value = libro.precio;
+
+            // Relaciones (Extraemos nombres/tipos)
+            document.getElementById('edit_editorial').value = libro.editorial ? libro.editorial.nombre : '';
+            document.getElementById('edit_publico').value = libro.publico_objetivo ? libro.publico_objetivo.tipo : '';
+
+            // Listas (Convertimos a string separado por comas)
+            document.getElementById('edit_autores').value = libro.autores.map(a => a.nombre).join(', ');
+            document.getElementById('edit_categorias').value = libro.categorias.map(c => c.nombre).join(', ');
+
+            document.getElementById('modalEditar').style.display = 'flex';
+        }
+
+        function cerrarModal() {
+            document.getElementById('modalEditar').style.display = 'none';
+        }
+
+        // --- LÓGICA DE API ---
+        async function cargarLibros(valorBusqueda = "") {
+            const tbody = document.getElementById('cuerpoTabla');
+            const tipoFiltro = document.getElementById('filtroTipo').value;
+            tbody.innerHTML = '<tr><td colspan="5" style="text-align:center; padding:20px;">Cargando...</td></tr>';
+
+            let url = `${API_URL}/`;
+            if (valorBusqueda) {
+                switch (tipoFiltro) {
+                    case 'titulo': url = `${API_URL}/buscar?q=${valorBusqueda}`; break;
+                    case 'autor': url = `${API_URL}/por-autor?nombre_autor=${valorBusqueda}`; break;
+                    case 'categoria': url = `${API_URL}/por-categoria?genero=${valorBusqueda}`; break;
+                    case 'publico': url = `${API_URL}/por-publico?tipo_publico=${valorBusqueda}`; break;
+                    case 'isbn': url = `${API_URL}/isbn/${valorBusqueda}`; break;
+                }
+            }
+
+            try {
+                const res = await fetch(url);
+                if (!res.ok) {
+                    if(res.status === 404) throw new Error("No encontrado");
+                    throw new Error("Error API");
+                }
+                let datos = await res.json();
+                let libros = Array.isArray(datos) ? datos : [datos];
+                document.getElementById('totalLibros').innerText = libros.length;
+                tbody.innerHTML = '';
+                if(libros.length === 0) {
+                    tbody.innerHTML = '<tr><td colspan="5" style="text-align:center;">No hay resultados</td></tr>';
+                    return;
+                }
+                libros.forEach(libro => {
+                    const autores = libro.autores ? libro.autores.map(a => a.nombre).join(', ') : 'Anónimo';
+                    const categorias = libro.categorias ? libro.categorias.map(c => `<span class="badge">${c.nombre}</span>`).join('') : '';
+                    const publico = libro.publico_objetivo ? `<span class="badge badge-publico">${libro.publico_objetivo.tipo}</span>` : '';
+                    const editorial = libro.editorial ? libro.editorial.nombre : '-';
+                    const libroString = encodeURIComponent(JSON.stringify(libro));
+
+                    tbody.innerHTML += `
+                        <tr>
+                            <td><strong>${libro.titulo}</strong><br><small style="color:#aaa">${libro.isbn || ''}</small></td>
+                            <td>${autores}</td>
+                            <td><div style="font-weight:bold; font-size:0.9em;">${editorial}</div>${publico} ${categorias}</td>
+                            <td class="precio">$${libro.precio.toFixed(2)}</td>
+                            <td>
+                                <button class="btn-editar" onclick="abrirModal('${libroString}')">✏️</button>
+                                <button class="btn-eliminar" onclick="eliminarLibro(${libro.id})">🗑️</button>
+                            </td>
+                        </tr>`;
+                });
+            } catch (error) {
+                tbody.innerHTML = `<tr><td colspan="5" style="color:red; text-align:center;">${error.message === "No encontrado" ? "No encontrado" : "Error"}</td></tr>`;
+            }
+        }
+
+        async function guardarLibro(event) {
+            event.preventDefault();
+            const btn = event.target.querySelector('button'); btn.disabled = true;
+            const datos = {
+                titulo: document.getElementById('titulo').value,
+                isbn: document.getElementById('isbn').value,
+                precio: parseFloat(document.getElementById('precio').value),
+                editorial_nombre: document.getElementById('editorial').value,
+                publico_objetivo_tipo: document.getElementById('publico').value,
+                autores_nombres: document.getElementById('autores').value.split(',').filter(x=>x).map(x=>x.trim()),
+                categorias_nombres: document.getElementById('categorias').value.split(',').filter(x=>x).map(x=>x.trim()),
+                formato: "Físico"
+            };
+            await enviarDatos(API_URL + '/', 'POST', datos);
+            document.getElementById('formCrear').reset(); btn.disabled = false;
+        }
+
+        async function enviarEdicion(event) {
+            event.preventDefault();
+            const id = document.getElementById('edit_id').value;
+            const datos = {
+                titulo: document.getElementById('edit_titulo').value,
+                isbn: document.getElementById('edit_isbn').value, // NUEVO
+                precio: parseFloat(document.getElementById('edit_precio').value),
+                editorial_nombre: document.getElementById('edit_editorial').value, // NUEVO
+                publico_objetivo_tipo: document.getElementById('edit_publico').value, // NUEVO
+                autores_nombres: document.getElementById('edit_autores').value.split(',').filter(x=>x).map(x=>x.trim()),
+                categorias_nombres: document.getElementById('edit_categorias').value.split(',').filter(x=>x).map(x=>x.trim())
+            };
+            await enviarDatos(`${API_URL}/${id}`, 'PATCH', datos);
+            cerrarModal();
+        }
+
+        async function eliminarLibro(id) {
+            if(confirm("¿Borrar libro?")) await enviarDatos(`${API_URL}/${id}`, 'DELETE');
+        }
+
+        async function enviarDatos(url, method, bodyData = null) {
+            try {
+                const config = { method: method, headers: { 'Content-Type': 'application/json' } };
+                if(bodyData) config.body = JSON.stringify(bodyData);
+                const res = await fetch(url, config);
+                if(res.ok) {
+                    if(method === 'DELETE' || method === 'PATCH') {
+                        document.getElementById('buscador').value = ""; // Limpiar busqueda
+                    }
+                    cargarLibros();
+                    if(method !== 'GET') alert("¡Éxito!");
+                } else {
+                    const err = await res.json();
+                    alert("Error: " + JSON.stringify(err));
+                }
+            } catch (e) { alert("Error de red"); }
+        }
+
+        // Búsqueda con delay
+        let timeoutBuscador;
+        function buscarLibros() {
+            const val = document.getElementById('buscador').value.trim();
+            clearTimeout(timeoutBuscador);
+            timeoutBuscador = setTimeout(() => {
+                valorBusquedaGlobal = val;
+                cargarLibros(val);
+            }, 400);
+        }
+
+        cargarLibros();
+    </script>
+</body>
+</html>
