@@ -6,7 +6,7 @@ from Esquemas import esquemas
 
 from fastapi import APIRouter, Depends, HTTPException, Query
 from sqlmodel import Session
-from typing import List
+from typing import List, Optional
 from Servicios.database import get_session
 
 
@@ -27,20 +27,17 @@ def crear_libro(
 
 # 1. Endpoint general con paginación
 #Define el endpoint GET en la raiz (/Libros/), respondiendo con una lista de libros completos.
-@router.get("/", response_model=List[esquemas.LibroLeerCompleto]) # Cambiado
-#Define la funcion para leer todos los libros.
+@router.get("/", response_model=List[esquemas.LibroLeerCompleto])
 def leer_libros_todos(
-    #Inyecta la dependencia de la sesion.
     session: Session = Depends(get_session),
-    #Define el parametro de consulta 'skip' (para paginacion), con valor minimo 0.
     skip: int = Query(0, ge=0),
-    #Define el parametro de consulta 'limit' (para paginacion), con minimo 1 y maximo 100.
-    limit: int = Query(10, ge=1, le=100)
+    limit: int = Query(10, ge=1, le=100),
+    titulo: Optional[str] = None  
 ):
-    #Llama al servicio para obtener la lista de libros, pasando la paginacion.
-    libros = servicios.get_libros_todos(session, skip=skip, limit=limit)
-    #Devuelve la lista de libros encontrada.
-    return libros
+    if titulo:
+        return servicios.buscar_libros_por_titulo(session, titulo)
+        
+    return servicios.get_libros_todos(session, skip=skip, limit=limit)
 
 # 1. Consultar libros x autor
 #Define el endpoint GET en /por-autor, respondiendo con una lista de libros completos.

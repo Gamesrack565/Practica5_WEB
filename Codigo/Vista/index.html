@@ -196,7 +196,7 @@
             let url = `${API_URL}/`;
             if (valorBusqueda) {
                 switch (tipoFiltro) {
-                    case 'titulo': url = `${API_URL}/buscar?q=${valorBusqueda}`; break;
+                    case 'titulo': url = `${API_URL}/?titulo=${valorBusqueda}`; break;
                     case 'autor': url = `${API_URL}/por-autor?nombre_autor=${valorBusqueda}`; break;
                     case 'categoria': url = `${API_URL}/por-categoria?genero=${valorBusqueda}`; break;
                     case 'publico': url = `${API_URL}/por-publico?tipo_publico=${valorBusqueda}`; break;
