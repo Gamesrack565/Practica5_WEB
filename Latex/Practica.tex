@@ -83,7 +83,7 @@ La solución propuesta es el desarrollo de una API con FastAPI para la lógica d
 Componentes clave de la solución:
 \begin{itemize}
     \item \textbf{SQLModel:} Para definir la estructura de la base de datos estableciendo categoría, item y envío como entidades principales.
-    \item \textbf{endpoints (URLs):} Para crear, leer, actualizar y borrar items, categorías y envíos.
+    \item \textbf{endpoints (URLs):} Para crear, leer, actualizar y borrar libros, autores, editoriales, etc.
 \end{itemize}
 
 \newpage
@@ -124,7 +124,6 @@ La búsqueda por parámetros consiste en consultar datos específicos en la base
 \begin{itemize}
     \item \textbf{Libros del mismo autor.} Que permitirá obtener todos los libros escritos por un mismo autor.
     \item \textbf{Libros por categoría.} Que nos permitirá obtener todos los libros que pertenecen a una categoría específica.
-    \item \textbf{Libros por serie.} Que nos permitirá obtener todos los libros pertenecientes a una serie.
     \item \textbf{Libros por público objetivo.} Que nos permitirá obtener los libros según el público al que van dirigidos.
 \end{itemize}
 
@@ -136,13 +135,9 @@ Tomando en cuenta los siguientes aspectos de cada libro:
    \item ISBN
    \item Autor(es)
    \item Editorial
-   \item Año de publicación
-   \item Páginas
    \item Categorías
    \item Precio
-   \item Formato (físico o digital)
-   \item Público objetivo (Mayores de edad o menores de edad)
-   \item Serie (si pertenece a una serie de libros)
+   \item Público objetivo (Mayores de edad o menores de edad) 
 \end{itemize}
 \section{Diagrama UML}
 \begin{figure}[H]
@@ -335,6 +330,40 @@ Estos archivos definen los \textit{endpoints} (URLs) públicos de la aplicación
     \end{center}
 \end{itemize}
 
+\subsection*{FRONTEND:}
+
+\subsubsection*{Carga y Renderizado de Datos}
+La función \texttt{cargarLibros} es el núcleo de la interfaz. Utiliza la API \texttt{Fetch} de JavaScript para solicitar los datos al servidor
+ de forma asíncrona (\texttt{async/await}). Esto permite que la interfaz no se congele mientras espera la respuesta de la base de datos. 
+ Una vez recibidos los datos en formato JSON, se iteran y se inyectan dinámicamente en el DOM HTML.
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=1\textwidth]{Imagenes/front c_1.png}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=1\textwidth]{Imagenes/front c_2.png}
+\end{figure}
+
+\subsubsection*{Construcción Dinámica de URLs}
+Para conectar con los múltiples endpoints de búsqueda que ofrece la API (por título, autor, categoría, etc.), se implementó una lógica de 
+construcción de URLs basada en el filtro seleccionado por el usuario. Esto asegura que la petición HTTP coincida exactamente con lo que espera
+ el backend
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=1\textwidth]{Imagenes/front c_3.png}
+\end{figure}
+
+\subsubsection*{Optimización de Búsqueda (Debounce)}
+Para evitar saturar el servidor con una petición por cada tecla que presiona el usuario, se implementó un mecanismo de 
+\textit{debounce}. Esta función espera a que el usuario deje de escribir durante 400 milisegundos antes de lanzar la petición real a la API, 
+mejorando el rendimiento de la aplicación
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=1\textwidth]{Imagenes/front c_4.png}
+\end{figure}
+
 \newpage
 \section{Resultados}
 La aplicacion nos permite crear libros siguiendo la estructura de la base de datos, algunas opciones pueden ser descartadas ya que no todas son obligatorias.
@@ -376,7 +405,7 @@ Los Query Parameters estan para todos los endpoints de obtener de todos las enti
 \end{figure}
 
 \newpage
-En este caso selepcionamos ver solo 1 libro:
+En este caso seleccionamos ver solo 1 libro:
 
 Nos dara la misma informacion que imprime crear libro.
 \begin{figure}[H]
@@ -419,6 +448,58 @@ Algunas opciones no eran necesarias pero se implemenaron para tener un mejor man
 \begin{figure}[H]
     \centering
     \includegraphics[width=1\textwidth]{Imagenes/Resultados12.png}
+\end{figure}
+
+\subsection*{Vista del FRONTEND:}
+En esta imagen podemos observar al completo la intefaz con la que se interactuara, teniendo del lado izquierdo la seccion para agregar libros nuevos, y del 
+lado derecho los libros ingresados y la barra de busqueda para consultas especificas
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=1\textwidth]{Imagenes/Front 1.png}
+\end{figure}
+
+En la siguiente, podemos observar como es que ingresariamos datos nuevos para agregar libros del lado izquierdo
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=1\textwidth]{Imagenes/Front 2.png}
+\end{figure}
+
+Una vez que presionemos 'crear libro', la pagina nos avisara que la operacion fue exitosa
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=1\textwidth]{Imagenes/Front 3.png}
+\end{figure}
+
+En la siguiente imagen, podemos ver como funciona la busqueda por titulo, donde podremos buscar por titulos especificos
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=1\textwidth]{Imagenes/Front 4.png}
+\end{figure}
+
+Despues tenemos la busqueda por autor, donde habra que escribir el nombre completo ingresado para encontrar al autor deseado
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=1\textwidth]{Imagenes/Front 5.png}
+\end{figure}
+
+Posteriormente tenemos la busqueda por categorias, donde podremos buscar al menos una de las categorias ingresadas y todos los libros
+que tengan dicha categoria apareceran
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=1\textwidth]{Imagenes/Front 6.png}
+\end{figure}
+
+Tambien tenemos la busqueda por publico, donde podremos buscar entre aspectos como general o publicos mayores de edad
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=1\textwidth]{Imagenes/Front 7.png}
+\end{figure}
+
+Por ultimo, esta la categoria de ISBN, que es un identificador unico para cada libro
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=1\textwidth]{Imagenes/Front 8.png}
 \end{figure}
 \newpage % Opcional, para que las referencias empiecen en una página nueva
 
